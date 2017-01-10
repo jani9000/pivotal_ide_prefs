@@ -5,10 +5,13 @@ unless RUBY_VERSION.to_i >= 2
   exit 1
 end
 
-$LOAD_PATH.unshift "../ide_prefs/lib"
-$LOAD_PATH.unshift "../persistence/lib"
-$LOAD_PATH.unshift "../logging/lib"
-$LOAD_PATH.unshift "lib"
+bin_dir = File.dirname(__FILE__)
+root_dir = File.join(bin_dir, '..', '..')
+
+$LOAD_PATH.unshift "#{root_dir}/ide_prefs/lib"
+$LOAD_PATH.unshift "#{root_dir}/persistence/lib"
+$LOAD_PATH.unshift "#{root_dir}/logging/lib"
+$LOAD_PATH.unshift "#{root_dir}/cli/lib"
 
 require "optparse"
 require "ide_prefs"
@@ -19,7 +22,13 @@ repo_config_options = {}
 logging_options = {log_level: :info}
 
 OptionParser.new do |opts|
-  opts.on("--ide=IDE", ["webstorm", "intellij", "intellijcommunity", "rubymine"], "webstorm, intellij, intellijcommunity, rubymine") do |ide|
+  opts.banner = "Usage: ide_prefs [options] [install,uninstall]"
+
+  opts.on(
+      "--ide=IDE",
+      ["webstorm", "intellij", "intellijcommunity", "rubymine", "appcode", "androidstudio", "clion", "pycharm"],
+      "webstorm, intellij, intellijcommunity, rubymine, appcode, androidstudio", "clion", "pycharm"
+  ) do |ide|
     repo_config_options[:user_prefs_repo_location] = Module.const_get("Cli::Ide::#{ide.capitalize}UserPrefDir").new.path
     repo_config_options[:ide_name] = ide
   end
@@ -45,6 +54,9 @@ end
 Cli::Logger.new(log_level: logging_options[:log_level]).start
 
 repo_configuration = Cli::Configuration::RepoConfiguration.new(repo_config_options)
+
+puts "This will install preferences at #{repo_configuration.user_prefs_repo_location}"
+puts "And store backups at #{repo_configuration.backup_prefs_repo_location}"
 
 repos = {
   user_prefs_repo:    Persistence::Repos::UserPrefsRepo.new(location: repo_configuration.user_prefs_repo_location),

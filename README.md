@@ -26,8 +26,9 @@ Then, run the following commands:
 
 ```sh
 git clone https://github.com/pivotal/pivotal_ide_prefs
-cd pivotal_ide_prefs/cli
-bin/ide_prefs --ide=[rubymine,intellij,intellijcommunity,webstorm] install
+cd pivotal_ide_prefs
+cli/bin/ide_prefs install --ide=intellij
+# ide flag can be any of [rubymine,intellij,intellijcommunity,webstorm,androidstudio,appcode,clion,pycharm]
 ```
 
 This will install the preferences into your IDE of choice. 
@@ -46,7 +47,7 @@ Then open a terminal and run the following commands:
 
 ```sh
 cd /path/to/your/pivotal_ide_prefs/cli
-bin/ide_prefs --ide=[rubymine,intellij,intellijcommunity] uninstall
+bin/ide_prefs --ide=[rubymine,intellij,intellijcommunity,androidstudio,appcode,clion,pycharm] uninstall
 ```
 
 ## Contributing New Preferences
@@ -55,6 +56,7 @@ If you'd like to add preferences for another IDE, simply:
 
 0. Create a new folder in the `pref_sources` directory, and add any preferences to it that you want to manage for that IDE into the appropriate folders that the IDE calls for. See the existing folders there for examples.
 0. Create a new <IdeName>UserPrefDir class inside cli/lib/cli/ide. This class must respond to a single method, `#path`, which tells the installer where to install the preferences to on the system.
+0. Modify `cli/bin/ide_prefs.rb` to include the IDE
 0. Update the README, indicating that another IDE has been added to the installer. 
 
 ## Migrating from Pivotal-Preferences-RubyMine
@@ -82,6 +84,6 @@ If your team is already maintaining their rubymine preferences via the now-depre
 * ~~Basic Logging~~
 * ~~Specify log levels at the command line~~
 * ~~IntelliJ prefs~~
-* Appcode prefs
-* PyCharm prefs
+* ~~Appcode prefs~~
+* ~~PyCharm prefs~~
 * ~~WebStorm prefs~~
